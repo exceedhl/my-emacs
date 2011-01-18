@@ -1,0 +1,79 @@
+Features: 
+* transpose(line)
+* mark (word, string, sexp, paragraph, page, whole document)
+* delete(word, space, empty lines, one line, zap to char)
+* comment and uncomment
+* insert(split line, open line)
+* keyboard macro
+* case change(word, region)
+
+Keys:
+* <tab>, TAB
+* C-, M-, C-M-
+* C-c ... C-x ... C-h ...
+* 
+
+
+
+
+
+
+
+C-o open-line
+C-\ toggle-input-method
+
+C-,
+C-.
+C-<
+C->
+C-/
+C-;
+C-'
+C-[
+C-]
+C-{
+C-}
+C-(
+C-)
+C--
+C-=
+C-q
+C-i
+C-z
+
+
+C-c ...       
+       
+C-x ...
+keyboard macro
+C-x (
+C-x )
+
+C-x C-l downcase-region
+C-x C-u upcase-region
+C-x C-o delete-blank-lines
+C-x C-p mark-page
+C-x C-r find-file-read-only
+C-x C-t transpose-lines
+C-x C-x exchange-point-and-mark
+
+
+f1 help-command
+f2 2C-command
+f10 
+
+transpose: 
+C-t
+C-M-t 
+M-t
+
+M-...
+M-SPC just-one-space
+
+
+C-M-...
+split-line C-M-o
+
+
+tmm-menubar
+tab-to-tab-stop

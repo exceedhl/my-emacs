@@ -1,0 +1,10 @@
+ object literals
+/[ \t]*\([^<> \t]+\)[ \t]*:/\1/
+
+ functions, methods, instance variables
+/[ \t]*function[ \t]*\([^ \t]*\)[ \t]*(/\1/
+/[ \t]*[^()\. \t]+\(\.[^\. \t]+\)+[ \t]*=/\1/
+
+ objects
+/[ \t]*\([^ \t]+\)[ \t]*=[ \t]*{/\1/
+

@@ -1,0 +1,9 @@
+Put these files to correct destination and you will get same emacs environment like mine:
+
+.emacs -> ~/.emacs
+site-lisp -> ~/.emacs.d
+
+----
+
+js.tags is a tags definition file for javascript language.
+tweakemacs.el contains some of my functions extending emacs editing capability.

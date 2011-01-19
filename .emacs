@@ -143,6 +143,19 @@
 ;;; Set Aspell
 (setq-default ispell-program-name "/opt/local/bin/aspell")
 
+;;; Auto complete
+(add-to-list 'load-path "~/.emacs.d/auto-complete-1.3.1")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete-1.3.1/dict")
+(ac-config-default)
+
+;;; Yasnippet
+(add-to-list 'load-path "~/.emacs.d/yasnippet-0.6.1c")
+(require 'yasnippet)
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+
+
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 ;; (global-set-key (kbd "s-q") 'quit-window)

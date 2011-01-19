@@ -1,3 +1,6 @@
 - .org-id-locations
 - auto-save-list/
 - var/
+- *.elc
+- ac-comphist.dat
+- .DS_store

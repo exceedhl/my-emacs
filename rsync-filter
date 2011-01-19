@@ -3,4 +3,4 @@
 - var/
 - *.elc
 - ac-comphist.dat
-- .DS_store
+- .DS_Store

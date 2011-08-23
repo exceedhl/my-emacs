@@ -4,3 +4,5 @@
 - *.elc
 - ac-comphist.dat
 - .DS_Store
+- elpa
+- el-get

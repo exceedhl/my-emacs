@@ -11,26 +11,29 @@
  '(inhibit-startup-screen t)
  '(initial-buffer-choice t)
  '(initial-frame-alist (quote ((menu-bar-lines . 1))))
- '(initial-scratch-message ";; Welcome! I am prepared.
-
-")
+ '(initial-scratch-message "")
  '(large-file-warning-threshold nil)
  '(org-agenda-files (quote ("~/Desktop/mine/notes/reading-list.txt" "~/Desktop/mine/articles/todo.org" "~/Desktop/mine/notes/ideas.org" "~/Desktop/mine/notes/todo.org")))
  '(org-agenda-include-diary t)
  '(org-log-into-drawer t)
  '(safe-local-variable-values (quote ((Package . CCL) (Base . 10) (Syntax . Common-lisp) (Package . monitor)))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "White" :foreground "Black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "apple" :family "Monaco")))))
-(set-fontset-font (frame-parameter nil 'font)
-		  'han '("STHeiTi" . "unicode-bmp"))
+
+(if (display-graphic-p) 
+    (progn 
+      (set-fontset-font (frame-parameter nil 'font) 
+			'han '("STHeiTi" . "unicode-bmp"))
+      (custom-set-faces
+       ;; custom-set-faces was added by Custom.
+       ;; If you edit it by hand, you could mess it up, so be careful.
+       ;; Your init file should contain only one such instance.
+       ;; If there is more than one, they won't work right.
+       '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
+       '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))))
 
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
+(tool-bar-mode -1)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed t)
 (setq user-full-name "Huang Liang")
@@ -54,6 +57,7 @@
 
 (require 'package)
 (defvar package-archives '("tromey" . "http://tromey.com/elpa/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
@@ -78,7 +82,15 @@
 			       (setq c-tab-always-indent nil)
 			       (require 'inf-ruby)
 			       (require 'ruby-compilation)
-			       (define-key ruby-mode-map (kbd "M-r") 'run-rails-test-or-ruby-buffer))))
+			       (define-key ruby-mode-map (kbd "C-.") 'ac-complete-rsense)
+			       (add-to-list 'ac-sources 'ac-source-rsense-method)
+			       (add-to-list 'ac-sources 'ac-source-rsense-constant)
+			       (define-key ruby-mode-map (kbd "C-c C-e") 'run-rails-test-or-ruby-buffer)
+			       (define-key ruby-mode-map (kbd "M-r") 'run-rails-test-or-ruby-buffer)
+			       (define-key ruby-mode-map (kbd "M-n") 'ruby-end-of-block)
+			       (define-key ruby-mode-map (kbd "M-p") 'ruby-beginning-of-block)
+			       (define-key ruby-mode-map (kbd "s-n") 'ruby-forward-sexp)
+			       (define-key ruby-mode-map (kbd "s-p") 'ruby-backward-sexp))))
 (defun rhtml-mode-hook ()
   (autoload 'rhtml-mode "rhtml-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
@@ -145,7 +157,11 @@
 (require 'el-get)
 
 (setq el-get-sources
-      '(ido-hacks yasnippet auto-complete magit
+      '(ido-hacks yasnippet auto-complete magit clojure-mode color-theme
+		  (:name color-theme-merbivore
+			 :type git
+			 :url "git://github.com/mig/color-theme-merbivore.git"
+			 :load "color-theme-merbivore.el")
 		  (:name ruby-mode 
 			 :type elpa
 			 :load "ruby-mode.el"
@@ -172,8 +188,7 @@
 		  (:name smex :after (lambda () (smex-hook)))
 		  (:name slime :after (lambda () (slime-hook)))
 		  (:name auctex :after (lambda () (auctex-hook)))
-		  (:name paredit :type elpa)
-		  ))
+		  (:name paredit :type elpa)))
 (el-get 'sync)
 
 ;;; Muse
@@ -191,7 +206,7 @@
 (ido-mode t)
 (setq ido-enable-flex-matching t) ;; enable fuzzy matching
 
-;;; Set recent-jump
+;;; set recent-jump
 (setq recent-jump-threshold 4)
 (setq recent-jump-ring-length 10)
 (global-set-key (kbd "s-P") 'recent-jump-backward)
@@ -199,22 +214,37 @@
 (require 'recent-jump)
 (recent-jump-mode 1)
 
+;;; set mic-paren
 (require 'mic-paren)
 (paren-activate) 
+
+;;; speedbar
+(require 'sr-speedbar)
+; (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
 
 ;;; Global key bindings
 (global-set-key (kbd "s-f") 'textmate-goto-file)
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
-(global-set-key (kbd "s-2") 'other-windows)
+(global-set-key (kbd "s-2") 'other-window)
 (global-set-key (kbd "<kp-delete>") 'delete-char)
 (global-set-key (kbd "s-d") 'kill-whole-line)
 (global-set-key (kbd "s-p") 'backward-sexp)
 (global-set-key (kbd "s-n") 'forward-sexp)
 (global-set-key (kbd "M-p") 'backward-list)
 (global-set-key (kbd "M-n") 'forward-list)
+(global-set-key (kbd "M-u") 'backward-up-list)
+(global-set-key (kbd "M-U") 'down-list)
 (global-set-key (kbd "M-C-n") 'make-frame)
-;; (global-set-key (kbd "s-g") 'keyboard-quit)
+(global-set-key (kbd "<M-down>") 'scroll-up-command)
+(global-set-key (kbd "<M-up>") 'scroll-down-command)
+(global-set-key (kbd "C-c d e") 'kill-sexp)
+(global-set-key (kbd "C-c d a") 'backward-kill-sexp)
+(global-set-key (kbd "<s-down>") 'end-of-buffer)
+(global-set-key (kbd "<s-up>") 'beginning-of-buffer)
+(global-set-key (kbd "s-/") 'comment-region)
+(global-set-key (kbd "s-?") 'uncomment-region)
+;; (global-set-key (kbd "s-w") ')
 ;; (global-set-key (kbd "s-q") 'quit-window)
 
 ;;; Org mode key bindings
@@ -223,6 +253,43 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+;;; setup rsense
+(setq rsense-home "/usr/local/rsense-0.3")
+(add-to-list 'load-path (concat rsense-home "/etc"))
+(require 'rsense)
+
+;;; open previous and next line
+;; Behave like vi's o command
+(defun open-next-line (arg)
+  "Move to the next line and then opens a line.
+    See also `newline-and-indent'."
+  (interactive "p")
+  (end-of-line)
+  (open-line arg)
+  (next-line 1)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+;; Behave like vi's O command
+(defun open-previous-line (arg)
+  "Open a new line before the current one. 
+     See also `newline-and-indent'."
+  (interactive "p")
+  (beginning-of-line)
+  (open-line arg)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+;; Autoindent open-*-lines
+(defvar newline-and-indent t
+  "Modify the behavior of the open-*-line functions to cause them to autoindent.")
+
+(global-set-key (kbd "<s-return>")   'open-next-line)
+(global-set-key (kbd "<C-s-return>") 'open-previous-line)
+
 ;;; move deleted file to trash bin
 (setq delete-by-moving-to-trash t)
 
+(if (display-graphic-p)
+    (color-theme-merbivore))
+;; (setq cursor-type 'bar)

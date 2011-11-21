@@ -32,7 +32,7 @@
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
-(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-progressive-speed t)
 (setq user-full-name "Huang Liang")
 (setq user-mail-address "lhuang@thoughtworks.com")
 
@@ -194,9 +194,10 @@
 ;;; Set recent-jump
 (setq recent-jump-threshold 4)
 (setq recent-jump-ring-length 10)
-(global-set-key (kbd "M-P") 'recent-jump-backward)
-(global-set-key (kbd "M-N") 'recent-jump-forward)
+(global-set-key (kbd "s-P") 'recent-jump-backward)
+(global-set-key (kbd "s-N") 'recent-jump-forward)
 (require 'recent-jump)
+(recent-jump-mode 1)
 
 (require 'mic-paren)
 (paren-activate) 
@@ -207,6 +208,12 @@
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'other-windows)
 (global-set-key (kbd "<kp-delete>") 'delete-char)
+(global-set-key (kbd "s-d") 'kill-whole-line)
+(global-set-key (kbd "s-p") 'backward-sexp)
+(global-set-key (kbd "s-n") 'forward-sexp)
+(global-set-key (kbd "M-p") 'backward-list)
+(global-set-key (kbd "M-n") 'forward-list)
+(global-set-key (kbd "M-C-n") 'make-frame)
 ;; (global-set-key (kbd "s-g") 'keyboard-quit)
 ;; (global-set-key (kbd "s-q") 'quit-window)
 

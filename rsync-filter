@@ -6,3 +6,5 @@
 - .DS_Store
 - elpa
 - el-get
+- share/
+- tramp

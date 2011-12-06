@@ -18,18 +18,15 @@
  '(org-log-into-drawer t)
  '(safe-local-variable-values (quote ((Package . CCL) (Base . 10) (Syntax . Common-lisp) (Package . monitor)))))
 
-(if (display-graphic-p) 
-    (progn 
-      (set-fontset-font (frame-parameter nil 'font) 
-			'han '("STHeiTi" . "unicode-bmp"))
-      (custom-set-faces
-       ;; custom-set-faces was added by Custom.
-       ;; If you edit it by hand, you could mess it up, so be careful.
-       ;; Your init file should contain only one such instance.
-       ;; If there is more than one, they won't work right.
-       '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
-       '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))))
-
+(set-fontset-font (frame-parameter nil 'font) 
+		  'han '("STHeiTi" . "unicode-bmp"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
@@ -38,6 +35,11 @@
 (setq mouse-wheel-progressive-speed t)
 (setq user-full-name "Huang Liang")
 (setq user-mail-address "lhuang@thoughtworks.com")
+(setq tramp-default-user "lhuang")
+(setq tramp-default-user "john" tramp-default-host "shell01.kp.realestate.com.au")
+;; suppress bell sound
+(setq visible-bell 1)
+(setq ring-bell-function 'ignore)
 
 ;;Allow you to type just "y" instead of "yes" when you exit
 (fset 'yes-or-no-p 'y-or-n-p) 
@@ -123,13 +125,13 @@
     (ruby-compilation-this-buffer)))
 
 (defun auctex-hook ()
-	    (setq TeX-engine 'xetex)
-	    (TeX-global-PDF-mode t) ; PDF mode enable, not plain
-	    (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
-	    (setq TeX-auto-save t)
-	    (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
-	    (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))) 
-	    (setq exec-path (append exec-path '("/usr/local/bin"))))
+  (setq TeX-engine 'xetex)
+  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
+  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
+  (setq TeX-auto-save t)
+  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
+  (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))) 
+  (setq exec-path (append exec-path '("/usr/local/bin"))))
 
 (defun smex-hook ()
   (smex-initialize)
@@ -138,17 +140,23 @@
   ;; This is your old M-x.
   (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
-
 (defun slime-hook ()
 ;;; Note that if you save a heap image, the character
 ;;; encoding specified on the command line will be preserved,
 ;;; and you won't have to specify the -K utf-8 any more.
   (setq inferior-lisp-program "/usr/local/bin/ccl -K utf-8")
-
-  (require 'slime)
   (setq slime-net-coding-system 'utf-8-unix)
-  (slime-setup '(slime-fancy slime-asdf)))
+  (add-hook 'lisp-mode-hook 'slime-mode)
+  (require 'slime)
+  (load "slime-indentation.el")
+  (slime-setup '(slime-indentation slime-repl)))
 
+(defun paredit-hook ()
+  (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
+  (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
+  (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+  (add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1))))  
+  
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
 (package-initialize)
@@ -157,7 +165,7 @@
 (require 'el-get)
 
 (setq el-get-sources
-      '(ido-hacks yasnippet auto-complete magit clojure-mode color-theme
+      '(ido-hacks ack yasnippet auto-complete magit clojure-mode color-theme
 		  (:name color-theme-merbivore
 			 :type git
 			 :url "git://github.com/mig/color-theme-merbivore.git"
@@ -185,10 +193,22 @@
 			 :url "http://github.com/yoshiki/yaml-mode.git"
 			 :features yaml-mode
 			 :after (lambda () (yaml-mode-hook)))
-		  (:name smex :after (lambda () (smex-hook)))
-		  (:name slime :after (lambda () (slime-hook)))
-		  (:name auctex :after (lambda () (auctex-hook)))
-		  (:name paredit :type elpa)))
+		  (:name smex 
+			 :load "smex.el"
+			 :after (lambda () (smex-hook)))
+		  (:name slime
+			 :after (lambda () (slime-hook)))
+		  (:name ac-slime
+			 :type git
+			 :url "https://github.com/purcell/ac-slime.git"
+			 :load "ac-slime.el"
+			 :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)))
+		  (:name paredit 
+			 :type elpa
+			 :load "paredit.el"
+			 :after (lambda () (paredit-hook))))
+      ;; (:name auctex :after (lambda () (auctex-hook)))
+      )
 (el-get 'sync)
 
 ;;; Muse
@@ -244,6 +264,10 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
+(global-set-key (kbd "s-T") 'multi-occur)
+(global-set-key (kbd "C-M-f") 'grep-find)
+(define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
+(define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
 ;; (global-set-key (kbd "s-w") ')
 ;; (global-set-key (kbd "s-q") 'quit-window)
 
@@ -290,6 +314,14 @@
 ;;; move deleted file to trash bin
 (setq delete-by-moving-to-trash t)
 
-(if (display-graphic-p)
-    (color-theme-merbivore))
+(color-theme-merbivore)
+
 ;; (setq cursor-type 'bar)
+(put 'dired-find-alternate-file 'disabled nil)
+
+;;; set shell mode
+(defun shell-mode-hook ()
+  (interactive)
+  (setq sh-basic-offset 2
+        sh-indentation 2))
+(add-hook 'sh-mode-hook 'shell-mode-hook)

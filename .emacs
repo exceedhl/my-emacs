@@ -206,7 +206,9 @@
 		  (:name paredit 
 			 :type elpa
 			 :load "paredit.el"
-			 :after (lambda () (paredit-hook))))
+			 :after (lambda () (paredit-hook)))
+		  (:name anything
+			 :load "anything-config.el"))
       ;; (:name auctex :after (lambda () (auctex-hook)))
       )
 (el-get 'sync)
@@ -243,7 +245,6 @@
 ; (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
 
 ;;; Global key bindings
-(global-set-key (kbd "s-f") 'textmate-goto-file)
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'other-window)
@@ -264,7 +265,6 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
-(global-set-key (kbd "s-T") 'multi-occur)
 (global-set-key (kbd "C-M-f") 'grep-find)
 (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
@@ -325,3 +325,29 @@
   (setq sh-basic-offset 2
         sh-indentation 2))
 (add-hook 'sh-mode-hook 'shell-mode-hook)
+
+;;; Anything: find all files under some dir
+(defun my-get-find-args (dir pattern)
+  (format "'%s' \\( -path \\*/.svn -o -path \\*/.rvm -o -path \\*/.chef -o -path \\*/.dropbox \\) -prune -o -iregex '.*%s.*' -print" dir pattern))
+
+(defun my-get-source-directory ()
+  "Please imlement me. Currently returns `path' inchanged."
+  (let ((project-root (textmate-find-project-root (car (last (split-string default-directory " "))))))
+    (if (null project-root)
+	(expand-file-name default-directory)
+      project-root)))
+
+(defvar my-find-files-source
+  '((name . "My find files source")
+    (candidates . (lambda ()
+                    (with-anything-current-buffer 
+		      (let ((args (my-get-find-args (my-get-source-directory) anything-pattern)))
+			(start-process-shell-command "file-search-process" nil "find" args)))))
+    (type . file)))
+
+(defun anything-my-files ()
+  (interactive)
+  (anything-other-buffer '(my-find-files-source)
+                         "*anything-my-files*"))
+
+(global-set-key (kbd "s-f") 'anything-my-files)

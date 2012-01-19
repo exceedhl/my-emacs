@@ -37,6 +37,8 @@
 (setq user-mail-address "lhuang@thoughtworks.com")
 (setq tramp-default-user "lhuang")
 (setq tramp-default-user "john" tramp-default-host "shell01.kp.realestate.com.au")
+(setenv "PATH"
+	(concat (getenv "PATH") ":" "/usr/local/bin"))
 ;; suppress bell sound
 (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
@@ -78,21 +80,23 @@
   (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))
-  (add-hook 'ruby-mode-hook '(lambda ()
-			       (setq ruby-deep-arglist t)
-			       (setq ruby-deep-indent-paren nil)
-			       (setq c-tab-always-indent nil)
-			       (require 'inf-ruby)
-			       (require 'ruby-compilation)
-			       (define-key ruby-mode-map (kbd "C-.") 'ac-complete-rsense)
-			       (add-to-list 'ac-sources 'ac-source-rsense-method)
-			       (add-to-list 'ac-sources 'ac-source-rsense-constant)
-			       (define-key ruby-mode-map (kbd "C-c C-e") 'run-rails-test-or-ruby-buffer)
-			       (define-key ruby-mode-map (kbd "M-r") 'run-rails-test-or-ruby-buffer)
-			       (define-key ruby-mode-map (kbd "M-n") 'ruby-end-of-block)
-			       (define-key ruby-mode-map (kbd "M-p") 'ruby-beginning-of-block)
-			       (define-key ruby-mode-map (kbd "s-n") 'ruby-forward-sexp)
-			       (define-key ruby-mode-map (kbd "s-p") 'ruby-backward-sexp))))
+  (add-hook 'ruby-mode-hook 
+	    '(lambda ()
+	       (setq ruby-deep-arglist t)
+	       (setq ruby-deep-indent-paren nil)
+	       (setq c-tab-always-indent nil)
+	       (require 'inf-ruby)
+	       (require 'ruby-compilation)
+	       (define-key ruby-mode-map (kbd "C-.") 'ac-complete-rsense)
+	       (add-to-list 'ac-sources 'ac-source-rsense-method)
+	       (add-to-list 'ac-sources 'ac-source-rsense-constant)
+	       (define-key ruby-mode-map (kbd "C-c C-e") 'run-rails-test-or-ruby-buffer)
+	       (define-key ruby-mode-map (kbd "M-r") 'run-rails-test-or-ruby-buffer)
+	       (define-key ruby-mode-map (kbd "M-n") 'ruby-end-of-block)
+	       (define-key ruby-mode-map (kbd "M-p") 'ruby-beginning-of-block)
+	       (define-key ruby-mode-map (kbd "s-n") 'ruby-forward-sexp)
+	       (define-key ruby-mode-map (kbd "s-p") 'ruby-backward-sexp))))
+
 (defun rhtml-mode-hook ()
   (autoload 'rhtml-mode "rhtml-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
@@ -130,8 +134,7 @@
   (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
   (setq TeX-auto-save t)
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
-  (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))) 
-  (setq exec-path (append exec-path '("/usr/local/bin"))))
+  (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))))
 
 (defun smex-hook ()
   (smex-initialize)
@@ -144,10 +147,11 @@
 ;;; Note that if you save a heap image, the character
 ;;; encoding specified on the command line will be preserved,
 ;;; and you won't have to specify the -K utf-8 any more.
-  (setq inferior-lisp-program "/usr/local/bin/ccl -K utf-8")
+  (setq inferior-lisp-program "/opt/local/bin/sbcl -K utf-8")
   (setq slime-net-coding-system 'utf-8-unix)
   (add-hook 'lisp-mode-hook 'slime-mode)
   (require 'slime)
+  (define-key slime-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
   (load "slime-indentation.el")
   (slime-setup '(slime-indentation slime-repl)))
 
@@ -156,7 +160,41 @@
   (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
   (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
   (add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1))))  
-  
+
+(defun mmm-mode-hook ()
+  (setq mmm-global-mode 'maybe)
+  (setq mmm-submode-decoration-level 0)
+  (mmm-add-group
+   'fancy-rhtml
+   '((html-css
+      :submode css-mode
+      :face mmm-code-submode-face
+      :front "<style"
+      :back "</style>")
+     (html-javascript
+      :submode javascript-mode
+      :face mmm-code-submode-face
+      :front "<script"
+      :back "</script>")))
+  ;; What features should be turned on in this html-mode?
+  (add-to-list 'mmm-mode-ext-classes-alist '(rhtml-mode nil html-css))
+  (add-to-list 'mmm-mode-ext-classes-alist '(rhtml-mode nil html-javascript)))
+
+(defun multi-web-mode-hook ()
+  (setq mweb-default-major-mode 'rhtml-mode)
+  (setq mweb-tags '((js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+		    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+  (setq mweb-filename-extensions '("rhtml" "htm" "html" "erb" "rjs"))
+  (multi-web-global-mode 1))
+
+;; (defun cucumber-mode-hook () 
+;;   (setq feature-default-language "en")
+;;   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
+;;   ;; load bundle snippets
+;;   (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
+;;   (load "feature-mode")
+;;   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
+
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
 (package-initialize)
@@ -165,7 +203,12 @@
 (require 'el-get)
 
 (setq el-get-sources
-      '(ido-hacks ack yasnippet auto-complete magit clojure-mode color-theme
+      '(ido-hacks ack yasnippet auto-complete magit clojure-mode color-theme nxhtml
+		  ;; (:name cucumber
+		  ;; 	 :type git
+		  ;; 	 :url "https://github.com/michaelklishin/cucumber.el.git"
+		  ;; 	 :load "feature-mode.el"
+		  ;; 	 :after (lambda () (cucumber-mode-hook)))
 		  (:name color-theme-merbivore
 			 :type git
 			 :url "git://github.com/mig/color-theme-merbivore.git"
@@ -193,6 +236,14 @@
 			 :url "http://github.com/yoshiki/yaml-mode.git"
 			 :features yaml-mode
 			 :after (lambda () (yaml-mode-hook)))
+		  ;; (:name mmm-mode
+		  ;; 	 :features mmm-mode
+		  ;; 	 :after (lambda () (mmm-mode-hook)))
+		  (:name multi-web-mode
+			 :type git
+			 :url "https://github.com/fgallina/multi-web-mode.git"
+			 :features multi-web-mode
+			 :after (lambda () (multi-web-mode-hook)))
 		  (:name smex 
 			 :load "smex.el"
 			 :after (lambda () (smex-hook)))
@@ -212,6 +263,14 @@
       ;; (:name auctex :after (lambda () (auctex-hook)))
       )
 (el-get 'sync)
+
+;; (add-to-list 'load-path "~/.emacs.d/el-get/cucumber")
+;;   (setq feature-default-language "en")
+;;   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
+;;   ;; load bundle snippets
+;;   (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
+;;   (require 'feature-mode)
+;;   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
 
 ;;; Muse
 (require 'muse-init)
@@ -265,7 +324,8 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
-(global-set-key (kbd "C-M-f") 'grep-find)
+(global-set-key (kbd "C-c C-f f") 'grep-find)
+(global-set-key (kbd "C-c C-f o") 'occur)
 (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
 ;; (global-set-key (kbd "s-w") ')
@@ -328,7 +388,7 @@
 
 ;;; Anything: find all files under some dir
 (defun my-get-find-args (dir pattern)
-  (format "'%s' \\( -path \\*/.svn -o -path \\*/.rvm -o -path \\*/.chef -o -path \\*/.dropbox \\) -prune -o -iregex '.*%s.*' -print" dir pattern))
+  (format "'%s' \\( -path \\*/.svn -o -path \\*/.rvm -o -path \\*/.chef -o -path \\*/.dropbox \\) -prune -o -iname '*%s*' -print" dir pattern))
 
 (defun my-get-source-directory ()
   "Please imlement me. Currently returns `path' inchanged."

@@ -38,7 +38,7 @@
 (setq tramp-default-user "lhuang")
 (setq tramp-default-user "john" tramp-default-host "shell01.kp.realestate.com.au")
 (setenv "PATH"
-	(concat (getenv "PATH") ":" "/usr/local/bin"))
+	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin"))
 ;; suppress bell sound
 (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
@@ -187,13 +187,13 @@
   (setq mweb-filename-extensions '("rhtml" "htm" "html" "erb" "rjs"))
   (multi-web-global-mode 1))
 
-;; (defun cucumber-mode-hook () 
-;;   (setq feature-default-language "en")
-;;   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
-;;   ;; load bundle snippets
-;;   (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
-;;   (load "feature-mode")
-;;   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
+(defun cucumber-mode-hook () 
+  (setq feature-default-language "en")
+  (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
+  ;; load bundle snippets
+  (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
+  (load "feature-mode")
+  (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
 
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
@@ -203,74 +203,71 @@
 (require 'el-get)
 
 (setq el-get-sources
-      '(ido-hacks ack yasnippet auto-complete magit clojure-mode color-theme nxhtml
-		  ;; (:name cucumber
-		  ;; 	 :type git
-		  ;; 	 :url "https://github.com/michaelklishin/cucumber.el.git"
-		  ;; 	 :load "feature-mode.el"
-		  ;; 	 :after (lambda () (cucumber-mode-hook)))
-		  (:name color-theme-merbivore
-			 :type git
-			 :url "git://github.com/mig/color-theme-merbivore.git"
-			 :load "color-theme-merbivore.el")
-		  (:name ruby-mode 
-			 :type elpa
-			 :load "ruby-mode.el"
-			 :after (lambda () (ruby-mode-hook)))
-		  (:name inf-ruby  :type elpa)
-		  (:name ruby-compilation :type elpa)
-		  (:name css-mode 
-			 :type elpa 
-			 :after (lambda () (css-mode-hook)))
-		  (:name textmate
-			 :type git
-			 :url "git://github.com/defunkt/textmate.el"
-			 :load "textmate.el")
-		  (:name rhtml
-			 :type git
-			 :url "https://github.com/crazycode/rhtml.git"
-			 :features rhtml-mode
-			 :after (lambda () (rhtml-mode-hook)))
-		  (:name yaml-mode 
-			 :type git
-			 :url "http://github.com/yoshiki/yaml-mode.git"
-			 :features yaml-mode
-			 :after (lambda () (yaml-mode-hook)))
-		  ;; (:name mmm-mode
-		  ;; 	 :features mmm-mode
-		  ;; 	 :after (lambda () (mmm-mode-hook)))
-		  (:name multi-web-mode
-			 :type git
-			 :url "https://github.com/fgallina/multi-web-mode.git"
-			 :features multi-web-mode
-			 :after (lambda () (multi-web-mode-hook)))
-		  (:name smex 
-			 :load "smex.el"
-			 :after (lambda () (smex-hook)))
-		  (:name slime
-			 :after (lambda () (slime-hook)))
-		  (:name ac-slime
-			 :type git
-			 :url "https://github.com/purcell/ac-slime.git"
-			 :load "ac-slime.el"
-			 :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)))
-		  (:name paredit 
-			 :type elpa
-			 :load "paredit.el"
-			 :after (lambda () (paredit-hook)))
-		  (:name anything
-			 :load "anything-config.el"))
-      ;; (:name auctex :after (lambda () (auctex-hook)))
-      )
-(el-get 'sync)
-
-;; (add-to-list 'load-path "~/.emacs.d/el-get/cucumber")
-;;   (setq feature-default-language "en")
-;;   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
-;;   ;; load bundle snippets
-;;   (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
-;;   (require 'feature-mode)
-;;   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
+      '(
+	(:name cucumber
+	       :type git
+	       :url "https://github.com/michaelklishin/cucumber.el.git"
+	       :load "feature-mode.el"
+	       :after (lambda () (cucumber-mode-hook)))
+	(:name color-theme-merbivore
+	       :type git
+	       :url "git://github.com/mig/color-theme-merbivore.git"
+	       :load "color-theme-merbivore.el")
+	(:name ruby-mode 
+	       :type elpa
+	       :load "ruby-mode.el"
+	       :after (lambda () (ruby-mode-hook)))
+	(:name inf-ruby  :type elpa)
+	(:name ruby-compilation :type elpa)
+	(:name css-mode 
+	       :type elpa 
+	       :after (lambda () (css-mode-hook)))
+	(:name textmate
+	       :type git
+	       :url "git://github.com/defunkt/textmate.el"
+	       :load "textmate.el")
+	(:name rhtml
+	       :type git
+	       :url "https://github.com/crazycode/rhtml.git"
+	       :features rhtml-mode
+	       :after (lambda () (rhtml-mode-hook)))
+	(:name yaml-mode 
+	       :type git
+	       :url "http://github.com/yoshiki/yaml-mode.git"
+	       :features yaml-mode
+	       :after (lambda () (yaml-mode-hook)))
+	;; (:name mmm-mode
+	;; 	 :features mmm-mode
+	;; 	 :after (lambda () (mmm-mode-hook)))
+	(:name multi-web-mode
+	       :type git
+	       :url "https://github.com/fgallina/multi-web-mode.git"
+	       :features multi-web-mode
+	       :after (lambda () (multi-web-mode-hook)))
+	(:name smex 
+	       :load "smex.el"
+	       :after (lambda () (smex-hook)))
+	(:name slime
+	       :after (lambda () (slime-hook)))
+	(:name ac-slime
+	       :type git
+	       :url "https://github.com/purcell/ac-slime.git"
+	       :load "ac-slime.el"
+	       :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)))
+	(:name paredit 
+	       :type elpa
+	       :load "paredit.el"
+	       :after (lambda () (paredit-hook)))
+	(:name yasnippet 
+	       :type git
+	       :url "https://github.com/capitaomorte/yasnippet.git")
+	;; (:name auctex
+	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
+	;;        :after (lambda () (auctex-hook)))
+	(:name anything
+	       :load "anything-config.el")))
+(setq my-packages (append '(ido-hacks ack auto-complete magit clojure-mode color-theme nxhtml) (mapcar 'el-get-source-name el-get-sources))) 
+(el-get 'sync my-packages)
 
 ;;; Muse
 (require 'muse-init)
@@ -301,7 +298,6 @@
 
 ;;; speedbar
 (require 'sr-speedbar)
-; (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
 
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)

@@ -191,7 +191,7 @@
   (setq feature-default-language "en")
   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
   ;; load bundle snippets
-  (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
+  ;; (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
   (load "feature-mode")
   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
 
@@ -203,13 +203,7 @@
 (require 'el-get)
 
 (setq el-get-sources
-      '(
-	(:name cucumber
-	       :type git
-	       :url "https://github.com/michaelklishin/cucumber.el.git"
-	       :load "feature-mode.el"
-	       :after (lambda () (cucumber-mode-hook)))
-	(:name color-theme-merbivore
+      '((:name color-theme-merbivore
 	       :type git
 	       :url "git://github.com/mig/color-theme-merbivore.git"
 	       :load "color-theme-merbivore.el")
@@ -261,6 +255,11 @@
 	(:name yasnippet 
 	       :type git
 	       :url "https://github.com/capitaomorte/yasnippet.git")
+	(:name cucumber
+	       :type git
+	       :url "https://github.com/michaelklishin/cucumber.el.git"
+	       :load "feature-mode.el"
+	       :after (lambda () (cucumber-mode-hook)))
 	;; (:name auctex
 	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	;;        :after (lambda () (auctex-hook)))

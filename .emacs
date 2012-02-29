@@ -35,8 +35,7 @@
 (setq mouse-wheel-progressive-speed t)
 (setq user-full-name "Huang Liang")
 (setq user-mail-address "lhuang@thoughtworks.com")
-(setq tramp-default-user "lhuang")
-(setq tramp-default-user "john" tramp-default-host "shell01.kp.realestate.com.au")
+(setq tramp-default-user "lhuang" tramp-default-host "shell01.kp.realestate.com.au")
 (setenv "PATH"
 	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin"))
 ;; suppress bell sound
@@ -319,8 +318,8 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
-(global-set-key (kbd "C-c C-f f") 'grep-find)
-(global-set-key (kbd "C-c C-f o") 'occur)
+(global-set-key (kbd "C-c C-f C-f") 'grep-find)
+(global-set-key (kbd "C-c C-f C-o") 'occur)
 (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
 ;; (global-set-key (kbd "s-w") ')
@@ -369,8 +368,6 @@
 ;;; move deleted file to trash bin
 (setq delete-by-moving-to-trash t)
 
-(color-theme-merbivore)
-
 ;; (setq cursor-type 'bar)
 (put 'dired-find-alternate-file 'disabled nil)
 
@@ -406,3 +403,6 @@
                          "*anything-my-files*"))
 
 (global-set-key (kbd "s-f") 'anything-my-files)
+
+(color-theme-merbivore)
+

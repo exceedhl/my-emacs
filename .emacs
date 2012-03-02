@@ -158,6 +158,7 @@
   (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
   (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
   (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+  (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
   (add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1))))  
 
 (defun mmm-mode-hook ()
@@ -259,6 +260,9 @@
 	       :url "https://github.com/michaelklishin/cucumber.el.git"
 	       :load "feature-mode.el"
 	       :after (lambda () (cucumber-mode-hook)))
+	(:name fastnav
+	       :type git
+	       :url "https://github.com/gleber/fastnav.el.git")
 	;; (:name auctex
 	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	;;        :after (lambda () (auctex-hook)))
@@ -320,8 +324,19 @@
 (global-set-key (kbd "s-?") 'uncomment-region)
 (global-set-key (kbd "C-c C-f C-f") 'grep-find)
 (global-set-key (kbd "C-c C-f C-o") 'occur)
+(global-set-key (kbd "M-\\") 'just-one-space)
+(global-set-key (kbd "M-|") 'delete-horizontal-space)
+(global-set-key "\M-z" 'fastnav-zap-up-to-char-forward)
+(global-set-key "\M-Z" 'fastnav-zap-up-to-char-backward)
+(global-set-key "\M-m" 'fastnav-mark-to-char-forward)
+(global-set-key "\M-M" 'fastnav-mark-to-char-backward)
+(global-set-key "\M-j" 'fastnav-jump-to-char-forward)
+(global-set-key "\M-J" 'fastnav-jump-to-char-backward)
+(global-set-key (kbd "s-r") 'repeat)
 (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
+(define-key paredit-mode-map (kbd "C-M-j") 'paredit-close-parenthesis-and-newline)
+(define-key paredit-mode-map (kbd "M-J") 'paredit-close-parenthesis-and-newline)
 ;; (global-set-key (kbd "s-w") ')
 ;; (global-set-key (kbd "s-q") 'quit-window)
 

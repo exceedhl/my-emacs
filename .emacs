@@ -18,8 +18,6 @@
  '(org-log-into-drawer t)
  '(safe-local-variable-values (quote ((Package . CCL) (Base . 10) (Syntax . Common-lisp) (Package . monitor)))))
 
-(set-fontset-font (frame-parameter nil 'font) 
-		  'han '("STHeiTi" . "unicode-bmp"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -27,6 +25,9 @@
  ;; If there is more than one, they won't work right.
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
  '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))
+
+(set-fontset-font (frame-parameter nil 'font) 
+		  'han '("STHeiTi" . "unicode-bmp"))
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
@@ -301,6 +302,12 @@
 ;;; speedbar
 (require 'sr-speedbar)
 
+;;; peepopen
+(require 'peepopen)
+(textmate-mode)
+(define-key *textmate-mode-map* (kbd "s-t") nil)
+(setq ns-pop-up-frames nil)
+
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
@@ -322,8 +329,8 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
-(global-set-key (kbd "C-c C-f C-f") 'grep-find)
-(global-set-key (kbd "C-c C-f C-o") 'occur)
+(global-set-key (kbd "C-c f f") 'grep-find)
+(global-set-key (kbd "C-c f o") 'occur)
 (global-set-key (kbd "M-\\") 'just-one-space)
 (global-set-key (kbd "M-|") 'delete-horizontal-space)
 (global-set-key "\M-z" 'fastnav-zap-up-to-char-forward)
@@ -393,31 +400,6 @@
         sh-indentation 2))
 (add-hook 'sh-mode-hook 'shell-mode-hook)
 
-;;; Anything: find all files under some dir
-(defun my-get-find-args (dir pattern)
-  (format "'%s' \\( -path \\*/.svn -o -path \\*/.rvm -o -path \\*/.chef -o -path \\*/.dropbox \\) -prune -o -iname '*%s*' -print" dir pattern))
-
-(defun my-get-source-directory ()
-  "Please imlement me. Currently returns `path' inchanged."
-  (let ((project-root (textmate-find-project-root (car (last (split-string default-directory " "))))))
-    (if (null project-root)
-	(expand-file-name default-directory)
-      project-root)))
-
-(defvar my-find-files-source
-  '((name . "My find files source")
-    (candidates . (lambda ()
-                    (with-anything-current-buffer 
-		      (let ((args (my-get-find-args (my-get-source-directory) anything-pattern)))
-			(start-process-shell-command "file-search-process" nil "find" args)))))
-    (type . file)))
-
-(defun anything-my-files ()
-  (interactive)
-  (anything-other-buffer '(my-find-files-source)
-                         "*anything-my-files*"))
-
-(global-set-key (kbd "s-f") 'anything-my-files)
-
+;;; set color theme
 (color-theme-merbivore)
 

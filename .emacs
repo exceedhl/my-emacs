@@ -82,6 +82,10 @@
   (add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))
   (add-hook 'ruby-mode-hook 
 	    '(lambda ()
+	         ;;; setup rsense
+	       (setq rsense-home "/usr/local/rsense-0.3")
+	       (add-to-list 'load-path (concat rsense-home "/etc"))
+	       (require 'rsense)
 	       (setq ruby-deep-arglist t)
 	       (setq ruby-deep-indent-paren nil)
 	       (setq c-tab-always-indent nil)
@@ -352,11 +356,6 @@
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-
-;;; setup rsense
-(setq rsense-home "/usr/local/rsense-0.3")
-(add-to-list 'load-path (concat rsense-home "/etc"))
-(require 'rsense)
 
 ;;; open previous and next line
 ;; Behave like vi's o command

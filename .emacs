@@ -26,9 +26,6 @@
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
  '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))
 
-(set-fontset-font (frame-parameter nil 'font) 
-		  'han '("STHeiTi" . "unicode-bmp"))
-
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
 (tool-bar-mode -1)
@@ -402,3 +399,18 @@
 ;;; set color theme
 (color-theme-merbivore)
 
+(defun set-my-font ()
+  ;; set chinese font
+  (set-fontset-font (frame-parameter nil 'font) 'han '("STHeiTi" . "unicode-bmp")))
+
+(defun my-frame-config (frame)
+  (with-selected-frame frame
+    (when (display-graphic-p)
+      (set-my-font))))
+
+(add-hook 'after-make-frame-functions 'my-frame-config)
+
+(when (display-graphic-p)
+  (set-my-font))
+
+(blink-cursor-mode)

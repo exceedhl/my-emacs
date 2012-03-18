@@ -25,7 +25,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal)))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal)))))
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
@@ -399,23 +399,25 @@
 
 ;;; set color theme
 (setq color-theme-is-global nil)
-(color-theme-merbivore)
+(defun color-theme-undo ()
+  (interactive)
+  (color-theme-reset-faces)
+  (color-theme-snapshot))
 
-(defun set-my-font ()
-  ;; set chinese font
-  (set-fontset-font (frame-parameter nil 'font) 'han '("STHeiTi" . "unicode-bmp")))
+;; backup current color theme
+(fset 'color-theme-snapshot (color-theme-make-snapshot))
+
+;;; set chinese font
+(defun set-my-font (frame)
+  (set-fontset-font (frame-parameter frame 'font) 'han '("STHeiTi" . "unicode-bmp")))
 
 (defun my-frame-config (frame)
   (with-selected-frame frame
     (if (window-system frame)
-	(progn
-	  (color-theme-merbivore)
-	  (set-my-font))
-      (color-theme-emacs-nw))))
+      (progn
+	(color-theme-merbivore)
+	(set-my-font frame))
+      (color-theme-undo))
+    (blink-cursor-mode)))
 
 (add-hook 'after-make-frame-functions 'my-frame-config)
-
-(when (display-graphic-p)
-  (set-my-font))
-
-(blink-cursor-mode)

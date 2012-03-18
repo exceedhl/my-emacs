@@ -16,7 +16,8 @@
  '(org-agenda-files (quote ("~/Desktop/mine/notes/reading-list.txt" "~/Desktop/mine/articles/todo.org" "~/Desktop/mine/notes/ideas.org" "~/Desktop/mine/notes/todo.org")))
  '(org-agenda-include-diary t)
  '(org-log-into-drawer t)
- '(safe-local-variable-values (quote ((Package . CCL) (Base . 10) (Syntax . Common-lisp) (Package . monitor)))))
+ ;; '(safe-local-variable-values (quote ((Package . CCL) (Base . 10) (Syntax . Common-lisp) (Package . monitor)))))
+ )
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -24,7 +25,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal)))))
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
@@ -397,6 +398,7 @@
 (add-hook 'sh-mode-hook 'shell-mode-hook)
 
 ;;; set color theme
+(setq color-theme-is-global nil)
 (color-theme-merbivore)
 
 (defun set-my-font ()
@@ -405,8 +407,11 @@
 
 (defun my-frame-config (frame)
   (with-selected-frame frame
-    (when (display-graphic-p)
-      (set-my-font))))
+    (if (window-system frame)
+	(progn
+	  (color-theme-merbivore)
+	  (set-my-font))
+      (color-theme-emacs-nw))))
 
 (add-hook 'after-make-frame-functions 'my-frame-config)
 

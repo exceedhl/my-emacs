@@ -198,6 +198,12 @@
   (load "feature-mode")
   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
 
+(defun coffee-mode-hook ()
+  (add-hook 'coffee-mode-hook
+	    '(lambda() (set (make-local-variable 'tab-width) 2)))
+  (setq coffee-js-mode 'javascript-mode)
+  (define-key coffee-mode-map (kbd "s-r") 'coffee-compile-buffer))
+
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
 (package-initialize)
@@ -263,6 +269,8 @@
 	       :url "https://github.com/michaelklishin/cucumber.el.git"
 	       :load "feature-mode.el"
 	       :after (lambda () (cucumber-mode-hook)))
+	(:name coffee-mode
+	       :after (lambda () (coffee-mode-hook)))
 	(:name fastnav
 	       :type git
 	       :url "https://github.com/gleber/fastnav.el.git")

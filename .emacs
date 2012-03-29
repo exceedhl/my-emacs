@@ -271,7 +271,7 @@
 	;;        :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
-(setq my-packages (append '(ido-hacks ack auto-complete magit clojure-mode color-theme nxhtml) (mapcar 'el-get-source-name el-get-sources))) 
+(setq my-packages (append '(ido-hacks ack auto-complete magit clojure-mode color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
 (el-get 'sync my-packages)
 
 ;;; Muse
@@ -421,3 +421,7 @@
     (blink-cursor-mode)))
 
 (add-hook 'after-make-frame-functions 'my-frame-config)
+
+;; For standalone window mode
+(color-theme-merbivore)
+(set-my-font nil)

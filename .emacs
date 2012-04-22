@@ -405,6 +405,9 @@
         sh-indentation 2))
 (add-hook 'sh-mode-hook 'shell-mode-hook)
 
+;;; set javascript mode
+(setq js-indent-level 2)
+
 ;;; set color theme
 (setq color-theme-is-global nil)
 (defun color-theme-undo ()

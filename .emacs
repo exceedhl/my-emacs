@@ -25,7 +25,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green"))))
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal)))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco")))))
 
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
@@ -132,8 +132,8 @@
 
 (defun auctex-hook ()
   (setq TeX-engine 'xetex)
-  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
-  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
+;  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
+;  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
   (setq TeX-auto-save t)
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))))
@@ -274,9 +274,9 @@
 	(:name fastnav
 	       :type git
 	       :url "https://github.com/gleber/fastnav.el.git")
-	;; (:name auctex
-	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
-	;;        :after (lambda () (auctex-hook)))
+	(:name auctex
+	       :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
+	       :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
 (setq my-packages (append '(ido-hacks ack auto-complete magit clojure-mode color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
@@ -433,6 +433,6 @@
 
 (add-hook 'after-make-frame-functions 'my-frame-config)
 
-;; For standalone window mode
+;;; For standard window mode
 (color-theme-merbivore)
 (set-my-font nil)

@@ -102,9 +102,7 @@
 (defun rhtml-mode-hook ()
   (autoload 'rhtml-mode "rhtml-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . rhtml-mode))
-  (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode))
-  (add-hook 'rhtml-mode '(lambda ()
-			   (define-key rhtml-mode-map (kbd "M-s") 'save-buffer))))
+  (add-to-list 'auto-mode-alist '("\\.rjs\\'" . rhtml-mode)))
 
 (defun yaml-mode-hook ()
   (autoload 'yaml-mode "yaml-mode" nil t)
@@ -116,6 +114,7 @@
   (add-hook 'css-mode-hook '(lambda ()
 			      (setq css-indent-level 2)
 			      (setq css-indent-offset 2))))
+
 (defun is-rails-project ()
   (when (textmate-project-root)
     (file-exists-p (expand-file-name "config/environment.rb" (textmate-project-root)))))
@@ -132,8 +131,8 @@
 
 (defun auctex-hook ()
   (setq TeX-engine 'xetex)
-;  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
-;  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
+  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
+  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
   (setq TeX-auto-save t)
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))))
@@ -157,12 +156,17 @@
   (load "slime-indentation.el")
   (slime-setup '(slime-indentation slime-repl)))
 
+(defun ac-hook ()
+  (ac-config-default))
+
 (defun paredit-hook ()
   (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
   (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
   (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
   (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
-  (add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1))))  
+  (add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1)))
+  (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
+  (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline))  
 
 (defun mmm-mode-hook ()
   (setq mmm-global-mode 'maybe)
@@ -190,11 +194,15 @@
   (setq mweb-filename-extensions '("rhtml" "htm" "html" "erb" "rjs"))
   (multi-web-global-mode 1))
 
+(defun yasnippet-hook ()
+  (setq yas/snippet-dirs '("~/.emacs.d/el-get/yasnippet/snippets"))
+  (yas/global-mode 1))
+
 (defun cucumber-mode-hook () 
   (setq feature-default-language "en")
   (setq feature-default-i18n-file "~/.emacs.d/el-get/cucumber/i18n.yml")
   ;; load bundle snippets
-  ;; (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
+  (yas/load-directory "~/.emacs.d/el-get/cucumber/snippets/feature-mode/")
   (load "feature-mode")
   (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode)))
 
@@ -202,7 +210,17 @@
   (add-hook 'coffee-mode-hook
 	    '(lambda() (set (make-local-variable 'tab-width) 2)))
   (setq coffee-js-mode 'javascript-mode)
-  (define-key coffee-mode-map (kbd "s-r") 'coffee-compile-buffer))
+  (define-key coffee-mode-map (kbd "C-c C-c") 'coffee-compile-buffer))
+
+(defun mark-multiple-hook ()
+  (require 'inline-string-rectangle)
+  (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
+  (require 'mark-more-like-this)
+  (global-set-key (kbd "C-<") 'mark-previous-like-this)
+  (global-set-key (kbd "C->") 'mark-next-like-this)
+  (global-set-key (kbd "C-*") 'mark-all-like-this)
+  (require 'rename-sgml-tag)
+  (define-key sgml-mode-map (kbd "C-c C-r") 'rename-sgml-tag))
 
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
@@ -263,7 +281,8 @@
 	       :after (lambda () (paredit-hook)))
 	(:name yasnippet 
 	       :type git
-	       :url "https://github.com/capitaomorte/yasnippet.git")
+	       :url "https://github.com/capitaomorte/yasnippet.git"
+	       :after (lambda () (yasnippet-hook)))
 	(:name cucumber
 	       :type git
 	       :url "https://github.com/michaelklishin/cucumber.el.git"
@@ -274,12 +293,21 @@
 	(:name fastnav
 	       :type git
 	       :url "https://github.com/gleber/fastnav.el.git")
-	(:name auctex
-	       :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
-	       :after (lambda () (auctex-hook)))
+	(:name mark-multiple
+	       :type git
+	       :url "https://github.com/magnars/mark-multiple.el.git"
+	       :after (lambda () (mark-multiple-hook)))
+	(:name expand-region
+	       :type git
+	       :url "https://github.com/magnars/expand-region.el.git")
+	(:name auto-complete
+	       :after (lambda () (ac-hook)))
+	;; (:name auctex
+	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
+	;;        :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
-(setq my-packages (append '(ido-hacks ack auto-complete magit clojure-mode color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
+(setq my-packages (append '(ido-hacks ack magit clojure-mode color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
 (el-get 'sync my-packages)
 
 ;;; Muse
@@ -318,6 +346,9 @@
 (define-key *textmate-mode-map* (kbd "s-t") nil)
 (setq ns-pop-up-frames nil)
 
+;;; set pending delete mode
+(pending-delete-mode t)
+
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
@@ -350,10 +381,8 @@
 (global-set-key "\M-j" 'fastnav-jump-to-char-forward)
 (global-set-key "\M-J" 'fastnav-jump-to-char-backward)
 (global-set-key (kbd "s-r") 'repeat)
-(define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
-(define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline)
-(define-key paredit-mode-map (kbd "C-M-j") 'paredit-close-parenthesis-and-newline)
-(define-key paredit-mode-map (kbd "M-J") 'paredit-close-parenthesis-and-newline)
+(global-set-key (kbd "s-w") 'er/expand-region)
+(global-set-key (kbd "<M-f4>") 'delete-frame)
 ;; (global-set-key (kbd "s-w") ')
 ;; (global-set-key (kbd "s-q") 'quit-window)
 
@@ -433,6 +462,6 @@
 
 (add-hook 'after-make-frame-functions 'my-frame-config)
 
-;;; For standard window mode
+;;; For standalone window mode
 (color-theme-merbivore)
 (set-my-font nil)

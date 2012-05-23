@@ -195,6 +195,7 @@
   (multi-web-global-mode 1))
 
 (defun yasnippet-hook ()
+  (require 'yasnippet)
   (setq yas/snippet-dirs '("~/.emacs.d/el-get/yasnippet/snippets"))
   (yas/global-mode 1))
 
@@ -345,6 +346,10 @@
 (textmate-mode)
 (define-key *textmate-mode-map* (kbd "s-t") nil)
 (setq ns-pop-up-frames nil)
+
+;;; uniquify filename
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
 
 ;;; set pending delete mode
 (pending-delete-mode t)

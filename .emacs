@@ -28,16 +28,27 @@
 ;;; Emacs general behavior setup
 (setq backup-inhibited t)
 (tool-bar-mode -1)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
-(setq mouse-wheel-progressive-speed t)
 (setq user-full-name "Huang Liang")
 (setq user-mail-address "lhuang@thoughtworks.com")
 (setq tramp-default-user "lhuang" tramp-default-host "shell01.kp.realestate.com.au")
 (setenv "PATH"
 	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin"))
+
+;; nice scrolling
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+(setq mouse-wheel-progressive-speed t)
+(setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 0)
+
 ;; suppress bell sound
 (setq visible-bell 1)
 (setq ring-bell-function 'ignore)
+
+;; mode line settings
+(line-number-mode t)
+(column-number-mode t)
+(size-indication-mode t)
 
 ;;Allow you to type just "y" instead of "yes" when you exit
 (fset 'yes-or-no-p 'y-or-n-p) 
@@ -367,6 +378,10 @@
 ;;; set pending delete mode
 (pending-delete-mode t)
 
+;; show-paren-mode: subtle highlighting of matching parens (global-mode)
+(show-paren-mode +1)
+(setq show-paren-style 'parenthesis)
+
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
@@ -388,7 +403,7 @@
 (global-set-key (kbd "<s-up>") 'beginning-of-buffer)
 (global-set-key (kbd "s-/") 'comment-region)
 (global-set-key (kbd "s-?") 'uncomment-region)
-(global-set-key (kbd "C-c f f") 'grep-find)
+(global-set-key (kbd "C-c f f") 'ack)
 (global-set-key (kbd "C-c f o") 'occur)
 (global-set-key (kbd "M-\\") 'just-one-space)
 (global-set-key (kbd "M-|") 'delete-horizontal-space)
@@ -469,17 +484,26 @@
 (defun set-my-font (frame)
   (set-fontset-font (frame-parameter frame 'font) 'han '("STHeiTi" . "unicode-bmp")))
 
-(defun my-frame-config (frame)
-  (with-selected-frame frame
-    (if (window-system frame)
-      (progn
-	(color-theme-merbivore)
-	(set-my-font frame))
-      (color-theme-undo))
-    (blink-cursor-mode)))
+(defun hide-menu-bar-line-in-console ()
+  (if (display-graphic-p)
+      (modify-frame-parameters frame '((menu-bar-lines . 1)))
+    (modify-frame-parameters frame '((menu-bar-lines . 0)))))
 
+(require 'server)
+(defun my-frame-config (frame)
+  (if (server-running-p)
+      (with-selected-frame frame
+	(if (display-graphic-p)
+	    (progn
+	      (set-my-font frame)
+	      (color-theme-merbivore))
+	  (color-theme-undo))
+	(blink-cursor-mode)
+	(hide-menu-bar-line-in-console))))
+
+(my-frame-config (selected-frame))
 (add-hook 'after-make-frame-functions 'my-frame-config)
 
 ;;; For standalone window mode
-(color-theme-merbivore)
-(set-my-font nil)
+;; (color-theme-merbivore)
+;; (set-my-font nil)

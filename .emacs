@@ -15,7 +15,8 @@
  '(large-file-warning-threshold nil)
  '(org-agenda-files (quote ("~/Desktop/mine/notes/reading-list.txt" "~/Desktop/mine/articles/todo.org" "~/Desktop/mine/notes/ideas.org" "~/Desktop/mine/notes/todo.org")))
  '(org-agenda-include-diary t)
- '(org-log-into-drawer t))
+ '(org-log-into-drawer t)
+ '(safe-local-variable-values (quote ((encoding . utf-8) (ruby-compilation-executable . "ruby") (ruby-compilation-executable . "ruby1.8") (ruby-compilation-executable . "ruby1.9") (ruby-compilation-executable . "rbx") (ruby-compilation-executable . "jruby")))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -39,7 +40,7 @@
 (setq mouse-wheel-progressive-speed t)
 (setq scroll-margin 0
       scroll-conservatively 100000
-      scroll-preserve-screen-position 0)
+      scroll-preserve-screen-position t)
 
 ;; suppress bell sound
 (setq visible-bell 1)

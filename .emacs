@@ -36,6 +36,7 @@
 	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin"))
 
 ;; nice scrolling
+(set-scroll-bar-mode nil)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed t)
 (setq scroll-margin 0
@@ -91,7 +92,7 @@
   (add-hook 'ruby-mode-hook 
 	    '(lambda ()
 	         ;;; setup rsense
-	       (setq rsense-home "/usr/local/rsense-0.3")
+	       (setq rsense-home "/usr/local")
 	       (add-to-list 'load-path (concat rsense-home "/etc"))
 	       (require 'rsense)
 	       (setq ruby-deep-arglist t)
@@ -254,7 +255,7 @@
 (setq el-get-sources
       '((:name color-theme-merbivore
 	       :type git
-	       :url "git://github.com/mig/color-theme-merbivore.git"
+	       :url "git://github.com/exceedhl/color-theme-merbivore.git"
 	       :load "color-theme-merbivore.el")
 	(:name ruby-mode 
 	       :type elpa
@@ -290,8 +291,8 @@
 	(:name smex 
 	       :load "smex.el"
 	       :after (lambda () (smex-hook)))
-	(:name slime
-	       :after (lambda () (slime-hook)))
+	;; (:name slime
+	;;        :after (lambda () (slime-hook)))
 	(:name ac-slime
 	       :type git
 	       :url "https://github.com/purcell/ac-slime.git"
@@ -359,12 +360,20 @@
 (require 'recent-jump)
 (recent-jump-mode 1)
 
+;;; number-window mode
+(autoload 'window-number-meta-mode "window-number"
+  "A global minor mode that enables use of the M- prefix to select
+windows, use `window-number-mode' to display the window numbers in
+the mode-line."
+  t)
+(window-number-meta-mode 1)
+
 ;;; set mic-paren
 (require 'mic-paren)
 (paren-activate) 
 
 ;;; speedbar
-(require 'sr-speedbar)
+;; (require 'sr-speedbar)
 
 ;;; peepopen
 (require 'peepopen)
@@ -387,6 +396,7 @@
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
 (global-set-key (kbd "s-1") 'delete-other-windows)
 (global-set-key (kbd "s-2") 'other-window)
+(global-set-key (kbd "s-3") 'delete-window)
 (global-set-key (kbd "<kp-delete>") 'delete-char)
 (global-set-key (kbd "s-d") 'kill-whole-line)
 (global-set-key (kbd "s-p") 'backward-sexp)

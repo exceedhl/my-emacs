@@ -23,7 +23,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "Monaco"))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "apple" :family "Consolas"))))
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green")))))
 
 ;;; Emacs general behavior setup
@@ -179,6 +179,17 @@
   (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
   (define-key paredit-mode-map (kbd "M-)") 'paredit-close-parenthesis-and-newline))  
 
+(defun clojure-hook ()
+  (require 'clojure-mode)
+  (define-clojure-indent
+    (describe 'defun)
+    (testing 'defun)
+    (given 'defun)
+    (using 'defun)
+    (with 'defun)
+    (it 'defun)
+    (do-it 'defun)))
+
 (defun mmm-mode-hook ()
   (setq mmm-global-mode 'maybe)
   (setq mmm-submode-decoration-level 0)
@@ -245,6 +256,12 @@
   (defalias 'ack-find-file 'ack-and-a-half-find-file)
   (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
 
+(defun workgroups-hook ()
+  (require 'workgroups)
+  (setq wg-prefix-key (kbd "C-c w"))
+  (workgroups-mode 1)
+  (wg-load "~/.emacs.workgroups"))
+
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
 (package-initialize)
@@ -291,6 +308,10 @@
 	(:name smex 
 	       :load "smex.el"
 	       :after (lambda () (smex-hook)))
+	(:name workgroups
+	       :url "https://github.com/tlh/workgroups.el.git"
+	       :load "workgroups.el"
+	       :after (lambda () (workgroups-hook)))
 	;; (:name slime
 	;;        :after (lambda () (slime-hook)))
 	(:name ac-slime
@@ -325,6 +346,8 @@
 	       :url "https://github.com/magnars/expand-region.el.git")
 	(:name auto-complete
 	       :after (lambda () (ac-hook)))
+	(:name clojure-mode
+	       :after (lambda () (clojure-hook)))
 	(:name ack-and-a-half
 	       :type git
 	       :url "https://github.com/jhelwig/ack-and-a-half.git"
@@ -334,7 +357,7 @@
 	;;        :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
-(setq my-packages (append '(ido-hacks magit clojure-mode color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
+(setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
 (el-get 'sync my-packages)
 
 ;;; Muse

@@ -164,6 +164,7 @@
   (add-hook 'lisp-mode-hook 'slime-mode)
   (require 'slime)
   (define-key slime-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
+  (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun)
   (load "slime-indentation.el")
   (slime-setup '(slime-indentation slime-repl)))
 
@@ -187,8 +188,16 @@
     (given 'defun)
     (using 'defun)
     (with 'defun)
+    (context 'defun)
     (it 'defun)
-    (do-it 'defun)))
+    (do-it 'defun)
+    (should 'defun)
+    (should-not 'defun)
+    (should= 'defun)
+    (should-not= 'defun)
+    (should-fail 'defun)
+    (should-throw 'defun)
+    (should-not-throw 'defun)))
 
 (defun mmm-mode-hook ()
   (setq mmm-global-mode 'maybe)
@@ -260,6 +269,7 @@
   (require 'workgroups)
   (setq wg-prefix-key (kbd "C-c w"))
   (workgroups-mode 1)
+  (setq wg-morph-on nil)
   (wg-load "~/.emacs.workgroups"))
 
 (require 'package)
@@ -390,6 +400,7 @@ windows, use `window-number-mode' to display the window numbers in
 the mode-line."
   t)
 (window-number-meta-mode 1)
+(window-number-define-keys window-number-meta-mode-map "s-")
 
 ;;; set mic-paren
 (require 'mic-paren)
@@ -417,9 +428,8 @@ the mode-line."
 
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
-(global-set-key (kbd "s-1") 'delete-other-windows)
-(global-set-key (kbd "s-2") 'other-window)
-(global-set-key (kbd "s-3") 'delete-window)
+(global-set-key (kbd "s-o") 'delete-other-windows)
+(global-set-key (kbd "s-O") 'delete-window)
 (global-set-key (kbd "<kp-delete>") 'delete-char)
 (global-set-key (kbd "s-d") 'kill-whole-line)
 (global-set-key (kbd "s-p") 'backward-sexp)

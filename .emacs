@@ -23,7 +23,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#1C1C1C" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "apple" :family "Consolas"))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :background "#242424" :foreground "#E6E1DC" :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "apple" :family "Consolas"))))
  '(dired-directory ((t (:inherit font-lock-function-name-face :foreground "Green")))))
 
 ;;; Emacs general behavior setup
@@ -33,7 +33,7 @@
 (setq user-mail-address "lhuang@thoughtworks.com")
 (setq tramp-default-user "lhuang" tramp-default-host "shell01.kp.realestate.com.au")
 (setenv "PATH"
-	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin"))
+	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin" ":" "/opt/local/bin"))
 
 ;; nice scrolling
 (set-scroll-bar-mode nil)
@@ -163,10 +163,10 @@
   (setq slime-net-coding-system 'utf-8-unix)
   (add-hook 'lisp-mode-hook 'slime-mode)
   (require 'slime)
-  (define-key slime-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
-  (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun)
   (load "slime-indentation.el")
-  (slime-setup '(slime-indentation slime-repl)))
+  (slime-setup '(slime-indentation slime-repl))
+  (define-key slime-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
+  (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun))
 
 (defun ac-hook ()
   (ac-config-default))
@@ -182,6 +182,8 @@
 
 (defun clojure-hook ()
   (require 'clojure-mode)
+  (define-key slime-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
+  (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun)
   (define-clojure-indent
     (describe 'defun)
     (testing 'defun)
@@ -328,7 +330,8 @@
 	       :type git
 	       :url "https://github.com/purcell/ac-slime.git"
 	       :load "ac-slime.el"
-	       :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)))
+	       :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)
+			(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
 	(:name paredit 
 	       :type elpa
 	       :load "paredit.el"
@@ -367,7 +370,7 @@
 	;;        :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
-(setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode) (mapcar 'el-get-source-name el-get-sources))) 
+(setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode ace-jump-mode) (mapcar 'el-get-source-name el-get-sources))) 
 (el-get 'sync my-packages)
 
 ;;; Muse
@@ -455,7 +458,8 @@ the mode-line."
 (global-set-key "\M-Z" 'fastnav-zap-up-to-char-backward)
 (global-set-key "\M-m" 'fastnav-mark-to-char-forward)
 (global-set-key "\M-M" 'fastnav-mark-to-char-backward)
-(global-set-key "\M-j" 'fastnav-jump-to-char-forward)
+(global-set-key (kbd "s-j") 'ace-jump-mode)
+;; (global-set-key "\M-j" 'fastnav-jump-to-char-forward)
 (global-set-key "\M-J" 'fastnav-jump-to-char-backward)
 (global-set-key (kbd "s-r") 'repeat)
 (global-set-key (kbd "s-w") 'er/expand-region)

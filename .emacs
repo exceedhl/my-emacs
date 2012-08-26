@@ -169,7 +169,9 @@
   (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun))
 
 (defun ac-hook ()
-  (ac-config-default))
+  (ac-config-default)
+  (define-key ac-complete-mode-map "\C-n" 'ac-next)
+  (define-key ac-complete-mode-map "\C-p" 'ac-previous))
 
 (defun paredit-hook ()
   (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))

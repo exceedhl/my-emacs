@@ -169,9 +169,7 @@
   (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun))
 
 (defun ac-hook ()
-  (ac-config-default)
-  (define-key ac-complete-mode-map "\C-n" 'ac-next)
-  (define-key ac-complete-mode-map "\C-p" 'ac-previous))
+  (ac-config-default))
 
 (defun paredit-hook ()
   (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
@@ -269,6 +267,10 @@
   (defalias 'ack-find-file 'ack-and-a-half-find-file)
   (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same))
 
+(defun ess-hook ()
+  (add-to-list 'ac-sources 'ac-source-R)
+  (setq ess-use-auto-complete t))
+
 (defun workgroups-hook ()
   (require 'workgroups)
   (setq wg-prefix-key (kbd "C-c w"))
@@ -326,8 +328,8 @@
 	       :url "https://github.com/tlh/workgroups.el.git"
 	       :load "workgroups.el"
 	       :after (lambda () (workgroups-hook)))
-	;; (:name slime
-	;;        :after (lambda () (slime-hook)))
+	(:name slime
+	       :after (lambda () (slime-hook)))
 	(:name ac-slime
 	       :type git
 	       :url "https://github.com/purcell/ac-slime.git"
@@ -367,6 +369,8 @@
 	       :type git
 	       :url "https://github.com/jhelwig/ack-and-a-half.git"
 	       :after (lambda () (ack-hook)))
+	(:name ess
+	       :after (lambda () (ess-hook)))
 	;; (:name auctex
 	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	;;        :after (lambda () (auctex-hook)))

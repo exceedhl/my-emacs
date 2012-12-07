@@ -229,7 +229,7 @@
 
 (defun yasnippet-hook ()
   (require 'yasnippet)
-  (setq yas/snippet-dirs '("~/.emacs.d/el-get/yasnippet/snippets"))
+  (setq yas/snippet-dirs '("~/.emacs.d/el-get/yasnippet/snippets" "~/.emacs.d/snippets"))
   (yas/global-mode 1))
 
 (defun cucumber-mode-hook () 

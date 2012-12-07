@@ -13,7 +13,7 @@
  '(initial-frame-alist (quote ((menu-bar-lines . 1))))
  '(initial-scratch-message "")
  '(large-file-warning-threshold nil)
- '(org-agenda-files (quote ("~/Desktop/mine/notes/reading-list.txt" "~/Desktop/mine/articles/todo.org" "~/Desktop/mine/notes/ideas.org" "~/Desktop/mine/notes/todo.org")))
+ '(org-agenda-files (quote ("~/Desktop/todo.org")))
  '(org-agenda-include-diary t)
  '(org-log-into-drawer t)
  '(safe-local-variable-values (quote ((encoding . utf-8) (ruby-compilation-executable . "ruby") (ruby-compilation-executable . "ruby1.8") (ruby-compilation-executable . "ruby1.9") (ruby-compilation-executable . "rbx") (ruby-compilation-executable . "jruby")))))
@@ -212,7 +212,7 @@
       :front "<style"
       :back "</style>")
      (html-javascript
-      :submode javascript-mode
+      :submode js2-mode
       :face mmm-code-submode-face
       :front "<script"
       :back "</script>")))
@@ -222,7 +222,7 @@
 
 (defun multi-web-mode-hook ()
   (setq mweb-default-major-mode 'rhtml-mode)
-  (setq mweb-tags '((js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+  (setq mweb-tags '((js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
 		    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
   (setq mweb-filename-extensions '("rhtml" "htm" "html" "erb" "rjs"))
   (multi-web-global-mode 1))
@@ -243,7 +243,7 @@
 (defun coffee-mode-hook ()
   (add-hook 'coffee-mode-hook
 	    '(lambda() (set (make-local-variable 'tab-width) 2)))
-  (setq coffee-js-mode 'javascript-mode)
+  (setq coffee-js-mode 'js2-mode)
   (define-key coffee-mode-map (kbd "C-c C-c") 'coffee-compile-buffer))
 
 (defun mark-multiple-hook ()
@@ -277,6 +277,21 @@
   (workgroups-mode 1)
   (setq wg-morph-on nil)
   (wg-load "~/.emacs.workgroups"))
+
+(defun js2-hook ()
+  (setq js-indent-level 4
+        indent-tabs-mode nil)
+  (setq indent-line-function 'js-indent-line)
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
+
+(defun slime-js-hook ()
+  (add-hook 'js2-mode-hook
+	    (lambda ()
+	      (slime-js-minor-mode 1)))
+  (add-hook 'css-mode-hook
+	    (lambda ()
+	      (define-key css-mode-map "\M-\C-x" 'slime-js-refresh-css)
+	      (define-key css-mode-map "\C-c\C-r" 'slime-js-embed-css))))
 
 (require 'package)
 (setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
@@ -329,6 +344,7 @@
 	       :load "workgroups.el"
 	       :after (lambda () (workgroups-hook)))
 	(:name slime
+	       :url "https://github.com/antifuchs/slime.git"
 	       :after (lambda () (slime-hook)))
 	(:name ac-slime
 	       :type git
@@ -336,6 +352,11 @@
 	       :load "ac-slime.el"
 	       :after (lambda () (add-hook 'slime-mode-hook 'set-up-slime-ac)
 			(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
+	(:name slime-js
+	       :type git
+	       :url "https://github.com/swank-js/slime-js.git"
+	       :load "slime-js.el"
+	       :after (lambda () (slime-js-hook)))
 	(:name paredit 
 	       :type elpa
 	       :load "paredit.el"
@@ -371,6 +392,11 @@
 	       :after (lambda () (ack-hook)))
 	(:name ess
 	       :after (lambda () (ess-hook)))
+	(:name js2-mode
+	       :type git
+	       :load "js2-mode.el"
+	       :url "https://github.com/mooz/js2-mode.git"
+	       :after (lamba () (js2-hook)))
 	;; (:name auctex
 	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	;;        :after (lambda () (auctex-hook)))
@@ -472,12 +498,20 @@ the mode-line."
 (global-set-key (kbd "<M-f4>") 'delete-frame)
 ;; (global-set-key (kbd "s-w") ')
 ;; (global-set-key (kbd "s-q") 'quit-window)
+(global-set-key [f5] 'slime-js-reload)
 
 ;;; Org mode key bindings
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+;; MobileOrg settings
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/Desktop")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/Desktop/todo.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/MobileOrg")
 
 ;;; open previous and next line
 ;; Behave like vi's o command
@@ -521,8 +555,8 @@ the mode-line."
         sh-indentation 2))
 (add-hook 'sh-mode-hook 'shell-mode-hook)
 
-;;; set javascript mode
-(setq js-indent-level 2)
+;;; bind .m to octave mode
+(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
 ;;; set color theme
 (setq color-theme-is-global nil)

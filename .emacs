@@ -169,7 +169,9 @@
   (define-key slime-mode-map (kbd "C-c C-c") 'slime-eval-defun))
 
 (defun ac-hook ()
-  (ac-config-default))
+  (ac-config-default)
+  (add-hook 'auto-complete-mode-hook 
+	    (lambda () (add-to-list 'ac-sources 'ac-source-yasnippet))))
 
 (defun paredit-hook ()
   (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
@@ -222,7 +224,7 @@
 
 (defun multi-web-mode-hook ()
   (setq mweb-default-major-mode 'rhtml-mode)
-  (setq mweb-tags '((js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+  (setq mweb-tags '((js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
 		    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
   (setq mweb-filename-extensions '("rhtml" "htm" "html" "erb" "rjs"))
   (multi-web-global-mode 1))
@@ -383,6 +385,7 @@
 	       :type git
 	       :url "https://github.com/magnars/expand-region.el.git")
 	(:name auto-complete
+	       :url "https://github.com/auto-complete/auto-complete.git"
 	       :after (lambda () (ac-hook)))
 	(:name clojure-mode
 	       :after (lambda () (clojure-hook)))
@@ -397,6 +400,10 @@
 	       :load "js2-mode.el"
 	       :url "https://github.com/mooz/js2-mode.git"
 	       :after (lamba () (js2-hook)))
+	(:name command-log-mode
+	       :type git
+	       :url "https://github.com/lewang/command-log-mode.git"
+	       :load "command-log-mode.el")
 	;; (:name auctex
 	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	;;        :after (lambda () (auctex-hook)))

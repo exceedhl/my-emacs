@@ -1,0 +1,10 @@
+# -*- coding: utf-8; mode: snippet -*-
+# name: amdefine
+# key: def
+# group: js
+# contributor: exceedhl@gmail.com
+# --
+define(["require", "$1"], function(require, $1) {
+    $0
+});
+

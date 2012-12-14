@@ -4,6 +4,6 @@
 # group: Jasmine
 # contributor: David Miller <david@deadpansincerity.com>
 # --
-it('Should ${1:have a description}', function () {
-    var $0
+it('should ${1:have a description}', function () {
+    $0
 });

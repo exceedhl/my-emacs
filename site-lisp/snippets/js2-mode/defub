@@ -1,0 +1,9 @@
+# -*- coding: utf-8; mode: snippet -*-
+# name: defub
+# key: defub
+# group: js
+# contributor: exceedhl@gmail.com
+# --
+define(['underscore', 'backbone'], function(_, Backbone) {
+    $0
+});

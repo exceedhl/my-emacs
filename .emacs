@@ -51,6 +51,7 @@
 (line-number-mode t)
 (column-number-mode t)
 (size-indication-mode t)
+(global-hl-line-mode)
 
 ;;Allow you to type just "y" instead of "yes" when you exit
 (fset 'yes-or-no-p 'y-or-n-p) 
@@ -142,9 +143,9 @@
 
 (defun auctex-hook ()
   (setq TeX-engine 'xetex)
-  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
-  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
-  (setq TeX-auto-save t)
+;  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
+;  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
+;  (setq TeX-auto-save t)
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))))
 
@@ -280,6 +281,9 @@
   (setq wg-morph-on nil)
   (wg-load "~/.emacs.workgroups"))
 
+(defun markdown-hook ()
+  (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode)))
+
 (defun js2-hook ()
   (setq js-indent-level 4
         indent-tabs-mode nil)
@@ -289,17 +293,25 @@
 (defun slime-js-hook ()
   (add-hook 'js2-mode-hook
 	    (lambda ()
-	      (slime-js-minor-mode 1)))
+	      (slime-js-minor-mode 1)
+	      (define-key slime-js-minor-mode-map (kbd "C-c C-b") 'slime-eval-buffer)
+	      (define-key slime-js-minor-mode-map (kbd "C-c C-r") 'slime-eval-region)))
   (add-hook 'css-mode-hook
 	    (lambda ()
 	      (define-key css-mode-map "\M-\C-x" 'slime-js-refresh-css)
 	      (define-key css-mode-map "\C-c\C-r" 'slime-js-embed-css))))
 
-(require 'package)
-(setq package-archives (cons '("tromey" . "http://tromey.com/elpa/") package-archives))
-(package-initialize)
+(defun autopair-hook ()
+  (autopair-global-mode)
+  (add-hook 'lisp-mode-hook #'(lambda () (setq autopair-dont-activate t))))
 
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(defun zencoding-hook ()
+  (require 'zencoding-mode)
+  (add-hook 'sgml-mode-hook 'zencoding-mode)
+  (add-hook 'nxhtml-mode-hook 'zencoding-mode)
+  (define-key zencoding-mode-keymap (kbd "C-.") 'zencoding-expand-line)
+  (define-key zencoding-mode-keymap (kbd "C-j") 'newline-and-indent))
+
 (require 'el-get)
 
 (setq el-get-sources
@@ -373,7 +385,14 @@
 	       :load "feature-mode.el"
 	       :after (lambda () (cucumber-mode-hook)))
 	(:name coffee-mode
-	       :after (lambda () (coffee-mode-hook)))
+	       :after (progn () (coffee-mode-hook)))
+	(:name sass-mode
+	       :type git
+	       :url "https://github.com/antonj/scss-mode.git"
+	       :after (progn () 
+			(require 'scss-mode)
+			(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
+			(setq scss-compile-at-save nil)))
 	(:name fastnav
 	       :type git
 	       :url "https://github.com/gleber/fastnav.el.git")
@@ -400,13 +419,44 @@
 	       :load "js2-mode.el"
 	       :url "https://github.com/mooz/js2-mode.git"
 	       :after (lamba () (js2-hook)))
+	(:name dash
+	       :type git
+	       :load "dash.el"
+	       :url "https://github.com/magnars/dash.el.git")
+	(:name multi-cursors
+	       :type git
+	       :url "https://github.com/magnars/multiple-cursors.el.git"
+	       :after (progn ()
+			(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+			(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+			(global-set-key (kbd "C-*") 'mc/mark-all-like-this)
+			(global-set-key (kbd "C-c C-r") 'mc/mark-sgml-tag-pair)
+			(global-set-key (kbd "C-c r t") 'set-rectangular-region-anchor)))
+	(:name js2-refactor
+	       :type git
+	       :load "js2-refactor.el"
+	       :url "https://github.com/magnars/js2-refactor.el.git"
+	       :after (progn () 
+			(require 'js2-refactor)))
 	(:name command-log-mode
 	       :type git
 	       :url "https://github.com/lewang/command-log-mode.git"
 	       :load "command-log-mode.el")
-	;; (:name auctex
-	;;        :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
-	;;        :after (lambda () (auctex-hook)))
+	(:name autopair
+	       :after (progn () (autopair-hook)))
+	(:name zencoding-mode
+	       :after (progn () (zencoding-hook)))
+	(:name markdown-mode
+	       :after (progn () (markdown-hook)))
+	(:name dired-view
+	       :after (progn () (add-hook 'dired-mode-hook 'dired-view-minor-mode-on)
+			(define-key dired-mode-map (kbd ";") 'dired-view-minor-mode-toggle)
+			(define-key dired-mode-map (kbd ":") 'dired-view-minor-mode-dired-toggle)))
+	(:name dired-details
+	       :after (progn () (dired-details-install)))
+	(:name auctex
+	       :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
+	       :after (progn () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
 (setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode ace-jump-mode) (mapcar 'el-get-source-name el-get-sources))) 
@@ -470,6 +520,8 @@ the mode-line."
 
 ;;; Global key bindings
 (global-set-key (kbd "s-t") 'ido-switch-buffer)
+(global-set-key (kbd "s-e") 'ido-switch-buffer)
+(global-set-key (kbd "s-g") 'keyboard-quit)
 (global-set-key (kbd "s-o") 'delete-other-windows)
 (global-set-key (kbd "s-O") 'delete-window)
 (global-set-key (kbd "<kp-delete>") 'delete-char)
@@ -519,6 +571,51 @@ the mode-line."
 (setq org-mobile-inbox-for-pull "~/Desktop/todo.org")
 ;; Set to <your Dropbox root directory>/MobileOrg.
 (setq org-mobile-directory "~/Dropbox/MobileOrg")
+
+(require 'org-latex)
+;; org mode latex export setup
+(add-to-list 'org-export-latex-classes
+  '("cn-org-article" 
+"\\documentclass[11pt]{ctexart} 
+\\usepackage{fontspec}
+\\setCJKmainfont[BoldFont={Heiti SC},ItalicFont={Adobe Kaiti Std}]{SimSun}
+\\setCJKsansfont{Heiti SC Light}
+\\setmainfont{Minion Pro}
+\\setsansfont{Eurostile}
+\\setmonofont{Courier New}
+\\usepackage{fullpage} 
+\\usepackage[dvipsnames]{xcolor}
+\\usepackage[colorlinks=false]{hyperref}
+\\hypersetup{colorlinks,filebordercolor=Red}
+\\usepackage[top=1in,bottom=0.5in,left=1in,right=1.25in]{geometry}
+\\usepackage{sectsty}
+\\usepackage{marginnote}
+\\sectionfont{\\raggedright}
+\\title{}
+      [NO-DEFAULT-PACKAGES]
+      [NO-PACKAGES]"
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(setq org-latex-to-pdf-process 
+      '("xelatex -interaction nonstopmode %f"
+	"xelatex -interaction nonstopmode %f"))
+
+;;; copy current file path
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+(global-set-key (kbd "s-C") 'copy-file-name-to-clipboard)
 
 ;;; open previous and next line
 ;; Behave like vi's o command

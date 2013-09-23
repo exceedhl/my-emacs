@@ -385,11 +385,11 @@
 	       :load "feature-mode.el"
 	       :after (lambda () (cucumber-mode-hook)))
 	(:name coffee-mode
-	       :after (progn () (coffee-mode-hook)))
+	       :after (lambda () (coffee-mode-hook)))
 	(:name sass-mode
 	       :type git
 	       :url "https://github.com/antonj/scss-mode.git"
-	       :after (progn () 
+	       :after (lambda () 
 			(require 'scss-mode)
 			(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 			(setq scss-compile-at-save nil)))
@@ -426,7 +426,7 @@
 	(:name multi-cursors
 	       :type git
 	       :url "https://github.com/magnars/multiple-cursors.el.git"
-	       :after (progn ()
+	       :after (lambda ()
 			(global-set-key (kbd "C->") 'mc/mark-next-like-this)
 			(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 			(global-set-key (kbd "C-*") 'mc/mark-all-like-this)
@@ -436,27 +436,27 @@
 	       :type git
 	       :load "js2-refactor.el"
 	       :url "https://github.com/magnars/js2-refactor.el.git"
-	       :after (progn () 
+	       :after (lambda () 
 			(require 'js2-refactor)))
 	(:name command-log-mode
 	       :type git
 	       :url "https://github.com/lewang/command-log-mode.git"
 	       :load "command-log-mode.el")
 	(:name autopair
-	       :after (progn () (autopair-hook)))
+	       :after (lambda () (autopair-hook)))
 	(:name zencoding-mode
-	       :after (progn () (zencoding-hook)))
+	       :after (lambda () (zencoding-hook)))
 	(:name markdown-mode
-	       :after (progn () (markdown-hook)))
+	       :after (lambda () (markdown-hook)))
 	(:name dired-view
-	       :after (progn () (add-hook 'dired-mode-hook 'dired-view-minor-mode-on)
+	       :after (lambda () (add-hook 'dired-mode-hook 'dired-view-minor-mode-on)
 			(define-key dired-mode-map (kbd ";") 'dired-view-minor-mode-toggle)
 			(define-key dired-mode-map (kbd ":") 'dired-view-minor-mode-dired-toggle)))
 	(:name dired-details
-	       :after (progn () (dired-details-install)))
+	       :after (lambda () (dired-details-install)))
 	(:name auctex
 	       :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
-	       :after (progn () (auctex-hook)))
+	       :after (lambda () (auctex-hook)))
 	(:name anything
 	       :load "anything-config.el")))
 (setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode ace-jump-mode) (mapcar 'el-get-source-name el-get-sources))) 

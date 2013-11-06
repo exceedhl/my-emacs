@@ -245,9 +245,10 @@
 
 (defun coffee-mode-hook ()
   (add-hook 'coffee-mode-hook
-	    '(lambda() (set (make-local-variable 'tab-width) 2)))
-  (setq coffee-js-mode 'js2-mode)
-  (define-key coffee-mode-map (kbd "C-c C-c") 'coffee-compile-buffer))
+	    '(lambda()
+	       (set (make-local-variable 'tab-width) 2)
+	       (auto-complete-mode 1)))
+  (setq coffee-js-mode 'js2-mode))
 
 (defun mark-multiple-hook ()
   (require 'inline-string-rectangle)
@@ -385,6 +386,8 @@
 	       :load "feature-mode.el"
 	       :after (lambda () (cucumber-mode-hook)))
 	(:name coffee-mode
+	       :type git
+	       :url "https://github.com/defunkt/coffee-mode.git"
 	       :after (lambda () (coffee-mode-hook)))
 	(:name sass-mode
 	       :type git
@@ -533,6 +536,7 @@ the mode-line."
 (global-set-key (kbd "M-u") 'backward-up-list)
 (global-set-key (kbd "M-U") 'down-list)
 (global-set-key (kbd "M-C-n") 'make-frame)
+(global-set-key (kbd "<backtab>") 'decrease-left-margin)
 (global-set-key (kbd "<M-down>") 'scroll-up-command)
 (global-set-key (kbd "<M-up>") 'scroll-down-command)
 (global-set-key (kbd "C-c d e") 'kill-sexp)

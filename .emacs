@@ -32,8 +32,7 @@
 (setq user-full-name "Huang Liang")
 (setq user-mail-address "lhuang@thoughtworks.com")
 (setq tramp-default-user "lhuang" tramp-default-host "shell01.kp.realestate.com.au")
-(setenv "PATH"
-	(concat (getenv "PATH") ":" "/usr/local/bin" ":" "/usr/texbin" ":" "/opt/local/bin"))
+(setq exec-path (append exec-path '("/opt/local/bin")))
 
 ;; nice scrolling
 (set-scroll-bar-mode nil)
@@ -146,8 +145,7 @@
 ;  (TeX-global-PDF-mode t) ; PDF mode enable, not plain
 ;  (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
 ;  (setq TeX-auto-save t)
-  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/texlive/2010/bin/universal-darwin:/usr/local/bin"))
-  (setq exec-path (append exec-path '("/usr/local/texlive/2010/bin/universal-darwin"))))
+  (setq exec-path (append exec-path '("/usr/texbin"))))
 
 (defun smex-hook ()
   (smex-initialize)
@@ -280,7 +278,8 @@
   (setq wg-prefix-key (kbd "C-c w"))
   (workgroups-mode 1)
   (setq wg-morph-on nil)
-  (wg-load "~/.emacs.workgroups"))
+  ;(wg-load "~/.emacs.workgroups")
+  )
 
 (defun markdown-hook ()
   (add-to-list 'auto-mode-alist '("\\.Rmd$" . markdown-mode)))
@@ -460,6 +459,18 @@
 	(:name auctex
 	       :build `("./autogen.sh" "rm -rf /tmp/auctex" "mkdir /tmp/auctex" ,(concat "./configure --with-texmf-dir=/tmp/auctex --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
 	       :after (lambda () (auctex-hook)))
+	(:name pyvenv
+	       :type git
+	       :url "https://github.com/jorgenschaefer/pyvenv.git")
+	(:name pymacs
+	       :type git
+	       :url "https://github.com/pinard/Pymacs.git")
+	;; (:name elpy
+	;;        :type git
+	;;        :url "https://github.com/jorgenschaefer/elpy.git"
+	;;        :load "elpy.el"
+	;;        :after (lambda () 
+			;; (elpy-enable)))
 	(:name anything
 	       :load "anything-config.el")))
 (setq my-packages (append '(ido-hacks magit color-theme nxhtml coffee-mode ace-jump-mode) (mapcar 'el-get-source-name el-get-sources))) 

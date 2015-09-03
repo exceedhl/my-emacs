@@ -3,7 +3,12 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+	autopair-insert-or-skip-quote
 	autopair-skip-close-maybe
+	ido-switch-buffer
+	kill-region
+	mouse-select-window
+	mouse-set-region
 	paredit-forward-kill-word
 	repeat
 	))
@@ -12,4 +17,5 @@
       '(
 	TeX-insert-backslash
 	autopair-insert-opening
+	mouse-minor-mode-menu
 	))
